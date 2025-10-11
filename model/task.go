@@ -3,12 +3,30 @@ package model
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"one-api/constant"
-	commonRelay "one-api/relay/common"
 	"time"
+
+	"github.com/QuantumNous/new-api/constant"
+	commonRelay "github.com/QuantumNous/new-api/relay/common"
 )
 
 type TaskStatus string
+
+func (t TaskStatus) ToVideoStatus() string {
+	var status string
+	switch t {
+	case TaskStatusQueued, TaskStatusSubmitted:
+		status = commonRelay.VideoStatusQueued
+	case TaskStatusInProgress:
+		status = commonRelay.VideoStatusInProgress
+	case TaskStatusSuccess:
+		status = commonRelay.VideoStatusCompleted
+	case TaskStatusFailure:
+		status = commonRelay.VideoStatusFailed
+	default:
+		status = commonRelay.VideoStatusUnknown // Default fallback
+	}
+	return status
+}
 
 const (
 	TaskStatusNotStart   TaskStatus = "NOT_START"
@@ -24,7 +42,7 @@ type Task struct {
 	ID         int64                 `json:"id" gorm:"primary_key;AUTO_INCREMENT"`
 	CreatedAt  int64                 `json:"created_at" gorm:"index"`
 	UpdatedAt  int64                 `json:"updated_at"`
-	TaskID     string                `json:"task_id" gorm:"type:varchar(50);index"`  // 第三方id，不一定有/ song id\ Task id
+	TaskID     string                `json:"task_id" gorm:"type:varchar(191);index"` // 第三方id，不一定有/ song id\ Task id
 	Platform   constant.TaskPlatform `json:"platform" gorm:"type:varchar(30);index"` // 平台
 	UserId     int                   `json:"user_id" gorm:"index"`
 	ChannelId  int                   `json:"channel_id" gorm:"index"`

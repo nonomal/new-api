@@ -3,9 +3,10 @@ package dto
 import (
 	"encoding/json"
 	"fmt"
-	"one-api/common"
-	"one-api/types"
 	"strings"
+
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/types"
 
 	"github.com/gin-gonic/gin"
 )
@@ -195,11 +196,15 @@ type ClaudeRequest struct {
 	Temperature       *float64        `json:"temperature,omitempty"`
 	TopP              float64         `json:"top_p,omitempty"`
 	TopK              int             `json:"top_k,omitempty"`
-	//ClaudeMetadata    `json:"metadata,omitempty"`
-	Stream     bool      `json:"stream,omitempty"`
-	Tools      any       `json:"tools,omitempty"`
-	ToolChoice any       `json:"tool_choice,omitempty"`
-	Thinking   *Thinking `json:"thinking,omitempty"`
+	Stream            bool            `json:"stream,omitempty"`
+	Tools             any             `json:"tools,omitempty"`
+	ContextManagement json.RawMessage `json:"context_management,omitempty"`
+	ToolChoice        any             `json:"tool_choice,omitempty"`
+	Thinking          *Thinking       `json:"thinking,omitempty"`
+	McpServers        json.RawMessage `json:"mcp_servers,omitempty"`
+	Metadata          json.RawMessage `json:"metadata,omitempty"`
+	// 服务层级字段，用于指定 API 服务等级。允许透传可能导致实际计费高于预期，默认应过滤
+	ServiceTier string `json:"service_tier,omitempty"`
 }
 
 func (c *ClaudeRequest) GetTokenCountMeta() *types.TokenCountMeta {
